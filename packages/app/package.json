@@ -9,6 +9,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@me/server": "^1.0.0"
+    "@me/server": "file:packages/server"
   }
 }
