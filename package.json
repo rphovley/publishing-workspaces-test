@@ -19,7 +19,7 @@
   "author": "rphovley@gmail.com",
   "license": "ISC",
   "dependencies": {
-    "@me/server": "^0.0.1",
-    "@me/app": "^0.0.1"
+    "@me/server": "file:packages/server",
+    "@me/app": "file:packages/app"
   }
 }
