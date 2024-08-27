@@ -7,7 +7,6 @@
     "packages/*"
   ],
   "scripts": {
-    "preinstall": "npm install packages/app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [
@@ -18,8 +17,5 @@
     "publishing-workspaces-test": "./bin/run.js"
   },
   "author": "rphovley@gmail.com",
-  "license": "ISC",
-  "dependencies": {
-    "@me/server": "file:packages/server"
-  }
+  "license": "ISC"
 }
