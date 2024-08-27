@@ -1,15 +1,14 @@
 name: Bump Minor Version
 
 on:
-  workflow_run:
-    workflows: ["Build and Package"]
-    types:
-      - completed
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  build:
+  build_and_package:
+    uses: ./.github/workflows/build.yml
+
+  bump_minor_version:
+    needs: build_and_package
     runs-on: ubuntu-latest
     permissions:
       contents: write
