@@ -1,0 +1,60 @@
+name: Create Release
+
+on:
+  push:
+    branches:
+      - release # or your default branch
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Fetch all history for all tags and branches
+
+      - name: Get latest release tag
+        id: get_latest_release
+        run: |
+          latest_tag=$(curl -s -H "Authorization: token ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/latest" | \
+            jq -r .tag_name)
+          echo "::set-output name=latest_tag::$latest_tag"
+
+      - name: Generate changelog
+        id: generate_changelog
+        run: |
+          changelog=$(git log ${{ steps.get_latest_release.outputs.latest_tag }}..HEAD --pretty=format:"- %s%n%b")
+          echo "CHANGELOG<<EOF" >> $GITHUB_ENV
+          echo "$changelog" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create new tag
+        id: create_tag
+        run: |
+          new_tag=$(date +'v%Y.%m.%d-%H%M%S')
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git tag $new_tag
+          git push origin $new_tag
+          echo "::set-output name=new_tag::$new_tag"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.create_tag.outputs.new_tag }}
+          release_name: Release ${{ steps.create_tag.outputs.new_tag }}
+          body: |
+            Changes in this Release:
+            ${{ env.CHANGELOG }}
+          draft: false
+          prerelease: false
+
+      - name: Publish to npm
+        run: npm run publish:npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
