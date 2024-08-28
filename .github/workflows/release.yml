@@ -32,21 +32,13 @@ jobs:
           echo "Last release tag: $last_release"
           echo "last_release=$last_release" >> $GITHUB_OUTPUT
 
-      - name: Get commit hash of last release
-        id: last_release_commit
-        run: |
-          last_release_commit=$(git rev-list -n 1 ${{ steps.last_release.outputs.last_release }})
-          echo "Last release commit: $last_release_commit"
-          echo "last_release_commit=$last_release_commit" >> $GITHUB_OUTPUT
-
       - name: Create Changelog
         id: create_changelog
         run: |
           echo "***"
-          echo $(git log ${{ steps.last_release_commit.outputs.last_release_commit }}..HEAD --pretty=format:"- %s%n%b \n")
+          git log ${{ steps.last_release.outputs.last_release }}..HEAD --pretty=format:"- %s%n" > changelog.md
           echo "***"
-          echo $(git log ${{ steps.last_release_commit.outputs.last_release_commit }}..HEAD --pretty=format:"- %s%n%b \n") > changelog.txt
-          echo "::set-output name=changelog::$(cat changelog.txt)"
+          git log ${{ steps.last_release.outputs.last_release }}..HEAD --pretty=format:"- %s%n" > changelog.md > changelog.txt
           echo "changelog=$(cat changelog.txt)" >> $GITHUB_OUTPUT
 
       - name: Create Release
@@ -59,7 +51,8 @@ jobs:
           release_name: Release ${{ steps.get_latest_tag.outputs.latest_tag }}
           body: |
             Changes in this Release:
-            ${{ steps.create_changelog.outputs.changelog }}`
+              
+            ${{ steps.create_changelog.outputs.changelog }}
           draft: false
           prerelease: false
 
