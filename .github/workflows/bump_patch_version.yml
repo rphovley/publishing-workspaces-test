@@ -5,11 +5,7 @@ on:
     branches: [main]
 
 jobs:
-  build_and_package:
-    uses: ./.github/workflows/build.yml
-
   bump_patch_version:
-    needs: build_and_package
     runs-on: ubuntu-latest
     permissions:
       contents: write
