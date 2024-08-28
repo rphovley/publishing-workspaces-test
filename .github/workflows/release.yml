@@ -66,11 +66,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: npm-package
-
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
