@@ -21,13 +21,17 @@ jobs:
         run: |
           git fetch --all --tags
           latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1 origin/main))
-          echo "::set-output name=latest_tag::$latest_tag"
+          echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
 
       - name: Create Changelog
         id: create_changelog
         run: |
+          echo "latest_tag=${{ steps.get_latest_tag.outputs.latest_tag }}"
+          echo $(git log ${{ steps.get_latest_tag.outputs.latest_tag }}..HEAD --pretty=format:"- %s%n%b \n")
           echo $(git log ${{ steps.get_latest_tag.outputs.latest_tag }}..HEAD --pretty=format:"- %s%n%b \n") > changelog.txt
+          cat changelog.txt
           echo "::set-output name=changelog::$(cat changelog.txt)"
+          echo "changelog=$(cat changelog.txt)" >> $GITHUB_OUTPUT
 
       - name: Create Release
         id: create_release
