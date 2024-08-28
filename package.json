@@ -1,6 +1,6 @@
 {
   "name": "publishing-workspaces-test",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Test to publish workspaces that are part of globals",
   "main": "index.js",
   "workspaces": [
