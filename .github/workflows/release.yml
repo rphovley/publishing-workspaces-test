@@ -35,11 +35,9 @@ jobs:
       - name: Create Changelog
         id: create_changelog
         run: |
-          echo "***"
-          git log ${{ steps.last_release.outputs.last_release }}..HEAD --pretty=format:"- %s%n" > changelog.md
-          echo "***"
-          git log ${{ steps.last_release.outputs.last_release }}..HEAD --pretty=format:"- %s%n" > changelog.md > changelog.txt
-          echo "changelog=$(cat changelog.txt)" >> $GITHUB_OUTPUT
+          git log ${{ steps.last_release.outputs.last_release }}..HEAD --pretty=format:"- %s %h %n"
+          git log ${{ steps.last_release.outputs.last_release }}..HEAD --pretty=format:"- %s %h%n" > changelog.md
+          echo "changelog=$(cat changelog.md)" >> $GITHUB_OUTPUT
 
       - name: Create Release
         id: create_release
