@@ -63,7 +63,7 @@ jobs:
           path: "*.tgz"
 
   publish:
-    needs: create_release
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact
