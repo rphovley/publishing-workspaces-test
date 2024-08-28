@@ -23,20 +23,30 @@ jobs:
           latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1 origin/main))
           echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
 
+      - name: Get last release
+        id: last_release
+        run: |
+          last_release=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/latest" | \
+            jq -r .tag_name)
+          echo "Last release tag: $last_release"
+          echo "last_release=$last_release" >> $GITHUB_OUTPUT
+
+      - name: Get commit hash of last release
+        id: last_release_commit
+        run: |
+          last_release_commit=$(git rev-list -n 1 ${{ steps.last_release.outputs.last_release }})
+          echo "Last release commit: $last_release_commit"
+          echo "last_release_commit=$last_release_commit" >> $GITHUB_OUTPUT
+
       - name: Create Changelog
         id: create_changelog
         run: |
-          echo "latest_tag=${{ steps.get_latest_tag.outputs.latest_tag }}"
-          echo "******"
-          echo $(git log -5 HEAD --pretty=format:"- %s%n%b")
-          echo $(git log -5 ${{ steps.get_latest_tag.outputs.latest_tag }} --pretty=format:"- %s%n%b")
-          echo "******"
-          echo $(git log ${{ steps.get_latest_tag.outputs.latest_tag }}..HEAD --pretty=format:"- %s%n%b \n")
-          echo $(git log ${{ steps.get_latest_tag.outputs.latest_tag }}..HEAD --pretty=format:"- %s%n%b \n") > changelog.txt
-          echo "******"
-          cat changelog.txt
+          echo "***"
+          echo $(git log ${{ steps.last_release_commit.outputs.last_release_commit }}..HEAD --pretty=format:"- %s%n%b \n")
+          echo "***"
+          echo $(git log ${{ steps.last_release_commit.outputs.last_release_commit }}..HEAD --pretty=format:"- %s%n%b \n") > changelog.txt
           echo "::set-output name=changelog::$(cat changelog.txt)"
-          echo "******"
           echo "changelog=$(cat changelog.txt)" >> $GITHUB_OUTPUT
 
       - name: Create Release
