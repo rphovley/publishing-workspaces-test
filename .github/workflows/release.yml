@@ -23,6 +23,12 @@ jobs:
           latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1 origin/main))
           echo "::set-output name=latest_tag::$latest_tag"
 
+      - name: Create Changelog
+        id: create_changelog
+        run: |
+          git log --pretty=format:"- %s" ${{ steps.get_latest_tag.outputs.latest_tag }}..HEAD > changelog.txt
+          echo "::set-output name=changelog::$(cat changelog.txt)"
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -33,7 +39,7 @@ jobs:
           release_name: Release ${{ steps.get_latest_tag.outputs.latest_tag }}
           body: |
             Changes in this Release:
-            $(git log ${{ steps.get_latest_tag.outputs.latest_tag }}..HEAD --pretty=format:"- %s%n%b")
+            ${{ steps.create_changelog.outputs.changelog }}`
           draft: false
           prerelease: false
 
