@@ -26,7 +26,7 @@ jobs:
       - name: Create Changelog
         id: create_changelog
         run: |
-          git log --pretty=format:"- %s" ${{ steps.get_latest_tag.outputs.latest_tag }}..HEAD > changelog.txt
+          echo $(git log ${{ steps.get_latest_tag.outputs.latest_tag }}..HEAD --pretty=format:"- %s%n%b \n") > changelog.txt
           echo "::set-output name=changelog::$(cat changelog.txt)"
 
       - name: Create Release
