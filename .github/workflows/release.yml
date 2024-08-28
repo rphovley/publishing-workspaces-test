@@ -36,7 +36,9 @@ jobs:
         id: create_changelog
         run: |
           git log ${{ steps.last_release.outputs.last_release }}..HEAD --pretty=format:"- %s %h%n" > changelog.md
-          echo "changelog=$(cat changelog.md)" >> $GITHUB_OUTPUT
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$(cat changelog.md)" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Create Release
         id: create_release
