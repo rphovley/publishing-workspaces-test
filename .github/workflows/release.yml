@@ -49,7 +49,6 @@ jobs:
         id: download-artifact
         uses: dawidd6/action-download-artifact@v6
         with:
-          workflow: build.yml
           name: npm-package
 
       - name: Setup Node.js
