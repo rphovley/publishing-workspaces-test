@@ -37,7 +37,7 @@ jobs:
           draft: false
           prerelease: false
 
-  build:
+  build_and_publish:
     needs: create_release
     runs-on: ubuntu-latest
     steps:
@@ -53,16 +53,6 @@ jobs:
         with:
           name: npm-package
           path: "*.tgz"
-
-  publish:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20"
-          registry-url: "https://registry.npmjs.org"
 
       - name: list files
         run: ls
