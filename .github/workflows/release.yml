@@ -28,8 +28,8 @@ jobs:
         run: |
           echo "latest_tag=${{ steps.get_latest_tag.outputs.latest_tag }}"
           echo "******"
-          echo git log -5 HEAD --pretty=format:"- %s%n%b"
-          echo git log -5 ${{ steps.get_latest_tag.outputs.latest_tag }} --pretty=format:"- %s%n%b"
+          echo $(git log -5 HEAD --pretty=format:"- %s%n%b")
+          echo $(git log -5 ${{ steps.get_latest_tag.outputs.latest_tag }} --pretty=format:"- %s%n%b")
           echo "******"
           echo $(git log ${{ steps.get_latest_tag.outputs.latest_tag }}..HEAD --pretty=format:"- %s%n%b \n")
           echo $(git log ${{ steps.get_latest_tag.outputs.latest_tag }}..HEAD --pretty=format:"- %s%n%b \n") > changelog.txt
